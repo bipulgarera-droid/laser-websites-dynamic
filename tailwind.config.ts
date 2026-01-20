@@ -9,8 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: "#000000",
+        foreground: "#FFFFFF",
+        "text-secondary": "#A3A3A3",
+        accent: "#4FD1C5",
+      },
+      fontFamily: {
+        sans: ["var(--font-manrope)", "system-ui", "sans-serif"],
+      },
+      letterSpacing: {
+        "ultra-wide": "0.25em",
       },
     },
   },
