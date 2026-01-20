@@ -65,10 +65,28 @@ const LUMENIS_DATA: PreviewData = {
     logo_url: "https://uytcxbsbdoyn-u1880.pressidiumcdn.com/wp-content/uploads/2023/01/Lumenis_RGB_Logo_Black.svg"
 };
 
+// Auto-extracted data for Renova Laser
+const RENOVALASER_DATA: PreviewData = {
+    id: "renovalaser",
+    slug: "renovalaser",
+    business_name: "Renova Laser Hair Removal & MedSpa",
+    tagline: "Premier laser hair removal and MedSpa.",
+    website_url: "https://renovalaser.com/",
+    colors: { primary: "#000000", secondary: "#FFFFFF", accent: "#808080", background: "#FFFFFF", text: "#333333" },
+    services: ["Laser Hair Removal", "Body Contouring", "Microneedling", "Botox & Fillers", "Chemical Peels", "IPL Photofacials", "Microdermabrasion", "SilkPeel Dermalinfusion"],
+    value_props: ["Patient-centered approach", "Effective treatment plans", "Affordable pricing"],
+    hero_phrases: ["AESTHETICS PERFECTED", "RENOVA DIFFERENCE", "CARE EXCELLENCE"],
+    cta_text: "BOOK CONSULTATION",
+    contact_info: {},
+    industry: "Laser & Aesthetics",
+    logo_url: "https://renovalaser.com/wp-content/uploads/2018/12/logo-renova-laser.png"
+};
+
 // Fallback data lookup
 const FALLBACK_DATA: Record<string, PreviewData> = {
     rondebosch: RONDEBOSCH_DATA,
-    lumenis: LUMENIS_DATA
+    lumenis: LUMENIS_DATA,
+    renovalaser: RENOVALASER_DATA
 };
 
 async function getPreviewData(slug: string): Promise<PreviewData | null> {
