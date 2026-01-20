@@ -48,164 +48,445 @@ export default function DynamicPreview({ data }: DynamicPreviewProps) {
             {/* Section: Brand Statement */}
             <section className="bg-black py-32 px-6">
                 <div className="max-w-7xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-center space-y-8"
-                    >
-                        <h2 className="text-4xl md:text-6xl font-light text-white tracking-tight">
-                            {data.tagline}
-                        </h2>
-                        <p className="text-xl text-white/60 max-w-3xl mx-auto font-light leading-relaxed">
-                            Experience the convergence of technology and aesthetics.
-                            {data.business_name} redefines the standard of care with precision-engineered treatments tailored to your unique biology.
-                        </p>
-                    </motion.div>
+                    <div className="flex justify-between items-start mb-8">
+                        <span className="text-white/30 text-xs font-mono tracking-widest uppercase">
+                            {data.industry?.toUpperCase() || "AESTHETICS"}
+                        </span>
+                        <span className="text-white/30 text-xs font-mono tracking-widest uppercase">
+                            PRECISION / RESULTS / CONFIDENCE
+                        </span>
+                    </div>
+
+                    <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white leading-[0.9] tracking-tight">
+                        {data.business_name?.toUpperCase() || "YOUR BRAND"}
+                    </h2>
+                    <p className="text-white/50 text-xl md:text-2xl mt-8 max-w-2xl">
+                        {data.tagline || "Experience the difference of expert care and advanced technology."}
+                    </p>
                 </div>
             </section>
 
-            {/* Section: Services Grid */}
-            <section className="bg-white py-32 px-6 text-black">
+            {/* Services Bento Grid */}
+            <section className="bg-white py-24 px-6">
                 <div className="max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-24">
-                        <div className="md:col-span-2 lg:col-span-1">
-                            <h3 className="text-5xl font-bold tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-500">
-                                CLINICAL<br />EXCELLENCE
-                            </h3>
-                            <p className="text-lg text-gray-600 leading-relaxed">
-                                Our portfolio of services represents the pinnacle of medical aesthetics,
-                                curated for maximum efficacy and minimal downtime.
-                            </p>
-                        </div>
+                    <div className="flex justify-between items-end mb-12">
+                        <h2 className="text-4xl md:text-5xl font-bold text-black">Our Services</h2>
+                        <span className="text-black/40 text-xs font-mono tracking-widest uppercase hidden md:block">
+                            TREATMENTS
+                        </span>
+                    </div>
 
-                        {services.map((service, index) => (
+                    <div className="grid grid-cols-12 gap-4 md:gap-6">
+                        {/* Primary Service Card */}
+                        <motion.div
+                            className="col-span-12 md:col-span-6 bg-black rounded-2xl p-8 min-h-[350px] flex flex-col justify-between"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg border border-white/20 flex items-center justify-center text-sm font-mono text-white/60">
+                                    01
+                                </div>
+                                <span className="text-white/40 text-xs font-mono tracking-widest uppercase">
+                                    FEATURED
+                                </span>
+                            </div>
+                            <div>
+                                <h3 className="text-3xl md:text-4xl font-bold text-white mb-3 leading-tight">
+                                    {services[0] || "Featured Service"}
+                                </h3>
+                                <p className="text-white/50 text-sm leading-relaxed">
+                                    {valueProps[1] || "Advanced solutions tailored to your needs. Experience the difference."}
+                                </p>
+                            </div>
+                        </motion.div>
+
+                        {/* Service Cards Grid */}
+                        {services.slice(1, 5).map((service, index) => (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 20 }}
+                                className="col-span-6 md:col-span-3 bg-[#F5F5F5] rounded-2xl p-6 min-h-[200px] flex flex-col justify-between"
+                                initial={{ opacity: 0, y: 40 }}
                                 whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
-                                className="group cursor-pointer border-t border-black/10 pt-8"
+                                transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
                             >
-                                <div className="flex justify-between items-baseline mb-4">
-                                    <h4 className="text-2xl font-medium group-hover:text-gray-600 transition-colors">
-                                        {service}
-                                    </h4>
-                                    <span className="text-xs font-mono text-gray-400">0{index + 1}</span>
+                                <div className="w-8 h-8 rounded-lg border border-black/10 flex items-center justify-center text-xs font-mono text-black/40">
+                                    {String(index + 2).padStart(2, '0')}
                                 </div>
-                                <p className="text-gray-500 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                    Advanced protocol for targeted results.
+                                <h3 className="text-lg md:text-xl font-bold text-black leading-tight">
+                                    {service}
+                                </h3>
+                            </motion.div>
+                        ))}
+
+                        {/* Value Prop Card */}
+                        <motion.div
+                            className="col-span-12 md:col-span-6 bg-[#E8E4E0] rounded-2xl p-8 flex items-center justify-between"
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.5 }}
+                        >
+                            <div>
+                                <span className="text-black/40 text-xs font-mono tracking-widest uppercase block mb-2">
+                                    WHY CHOOSE US
+                                </span>
+                                <h3 className="text-2xl md:text-3xl font-bold text-black">
+                                    {valueProps[0] || "Expert Care & Advanced Technology"}
+                                </h3>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Testimonials Section */}
+            <section className="bg-black py-24 px-6">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex justify-between items-end mb-16">
+                        <h2 className="text-4xl md:text-5xl font-bold text-white">What Clients Say</h2>
+                        <span className="text-white/30 text-xs font-mono tracking-widest uppercase hidden md:block">
+                            TESTIMONIALS
+                        </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            {
+                                quote: "The results exceeded my expectations. Professional team and state-of-the-art equipment.",
+                                name: "Sarah M.",
+                                detail: "Verified Client"
+                            },
+                            {
+                                quote: "Finally found a place that understands what I need. Highly recommend their services!",
+                                name: "Lisa K.",
+                                detail: "6 Month Client"
+                            },
+                            {
+                                quote: "Clean facility, knowledgeable staff, and amazing results. Worth every penny.",
+                                name: "Michelle T.",
+                                detail: "Regular Client"
+                            }
+                        ].map((testimonial, index) => (
+                            <motion.div
+                                key={index}
+                                className="bg-white/5 border border-white/10 rounded-2xl p-8"
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 0.1 * index }}
+                            >
+                                <div className="flex gap-1 mb-6">
+                                    {[...Array(5)].map((_, i) => (
+                                        <svg key={i} className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                    ))}
+                                </div>
+                                <p className="text-white/80 text-lg leading-relaxed italic mb-6">
+                                    "{testimonial.quote}"
                                 </p>
+                                <div>
+                                    <p className="text-white font-bold">{testimonial.name}</p>
+                                    <p className="text-white/40 text-sm">{testimonial.detail}</p>
+                                </div>
                             </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Section: Value Props / Stats */}
-            <section className="bg-zinc-900 py-32 px-6 text-white overflow-hidden">
-                <div className="max-w-7xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {valueProps.map((prop, index) => (
-                            <div key={index} className="relative p-8 border border-white/10 rounded-2xl bg-white/5 backdrop-blur-sm">
-                                <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
-                                <h4 className="text-xl font-medium mb-4">{prop}</h4>
-                                <div className="w-12 h-0.5 bg-gradient-to-r from-white to-transparent" />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
             {/* CTA Section */}
-            <section className="min-h-[80vh] flex items-center justify-center bg-black relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-50" />
+            <section className="bg-white py-32 px-6 relative overflow-hidden">
+                {/* Background Watermark */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+                    <span className="text-[15vw] font-bold text-black/[0.03] whitespace-nowrap tracking-tighter">
+                        BOOK NOW
+                    </span>
+                </div>
 
-                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+                <div className="max-w-4xl mx-auto text-center relative z-10">
                     <motion.h2
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
+                        className="text-5xl md:text-7xl lg:text-8xl font-bold text-black leading-[0.9] tracking-tight mb-6"
+                        initial={{ opacity: 0, y: 60 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="text-6xl md:text-8xl font-bold text-white tracking-tighter mb-12"
                     >
-                        READY TO<br />TRANSFORM?
+                        READY TO
+                        <br />
+                        <span className="text-black/60">TRANSFORM?</span>
                     </motion.h2>
 
-                    <motion.a
-                        href={data.website_url} // Link to actual site
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="inline-block bg-white text-black text-lg md:text-xl font-medium px-12 py-5 rounded-full hover:bg-gray-200 transition-colors shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                    <motion.p
+                        className="text-black/50 text-lg md:text-xl mb-12 max-w-xl mx-auto"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
                     >
-                        {data.cta_text || "BOOK CONSULTATION"}
+                        Book your free consultation today. Experience the {data.business_name || "difference"} difference.
+                    </motion.p>
+
+                    {/* Primary CTA Button */}
+                    <motion.a
+                        href={data.website_url || "#"}
+                        className="group inline-flex items-center justify-center gap-3 px-12 py-5 bg-black text-white font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:bg-black/80"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <span>{data.cta_text || "BOOK FREE CONSULTATION"}</span>
+                        <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
                     </motion.a>
 
-                    <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-white/40 text-sm font-mono uppercase tracking-widest">
-                        {data.contact_info.phone && <p>{data.contact_info.phone}</p>}
-                        {data.contact_info.email && <p>{data.contact_info.email}</p>}
-                        {data.contact_info.address && <p>{data.contact_info.address}</p>}
-                    </div>
+                    {/* Contact Info */}
+                    {data.contact_info?.phone && (
+                        <motion.p
+                            className="text-black/40 text-sm font-mono tracking-widest uppercase mt-8"
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            transition={{ delay: 0.7 }}
+                        >
+                            OR CALL: {data.contact_info.phone}
+                        </motion.p>
+                    )}
                 </div>
             </section>
+
+            {/* Footer */}
+            <footer className="bg-black py-12 px-6 text-center">
+                <span className="text-white/30 text-xs font-mono tracking-widest uppercase">
+                    {data.business_name?.toUpperCase()} © 2026
+                </span>
+            </footer>
         </main>
     );
 }
 
 
-function HeroAnimation({ data }: { data: PreviewData }) {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const [currentProgress, setCurrentProgress] = useState(0);
+// Hero Animation Component - Canvas Image Sequence
+const TOTAL_FRAMES = 192;
 
-    // Scroll handler - sync video time to scroll position
+// Preloader: loads ALL frames before allowing interaction (parallel batches for speed)
+function HeroPreloader({
+    onProgress,
+    onComplete
+}: {
+    onProgress: (percent: number) => void;
+    onComplete: () => void;
+}) {
     useEffect(() => {
-        let ticking = false;
+        let mounted = true;
+        const BATCH_SIZE = 10; // Load 10 images at a time for speed
 
-        const handleScroll = () => {
-            // Only process scroll if we're inside the viewport range of this component
-            // but here the component is 500vh so it handles its own logic
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    if (!containerRef.current || !videoRef.current) {
-                        ticking = false;
-                        return;
-                    }
+        const loadAllFrames = async () => {
+            let loaded = 0;
 
-                    const rect = containerRef.current.getBoundingClientRect();
-                    const windowHeight = window.innerHeight;
-                    const containerHeight = containerRef.current.offsetHeight;
-                    const video = videoRef.current;
+            for (let batch = 0; batch < TOTAL_FRAMES; batch += BATCH_SIZE) {
+                if (!mounted) return;
 
-                    const scrollableDistance = containerHeight - windowHeight;
-                    const scrolled = -rect.top;
-                    const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
+                // Create batch of image load promises
+                const batchPromises = [];
+                for (let i = batch; i < Math.min(batch + BATCH_SIZE, TOTAL_FRAMES); i++) {
+                    const img = new Image();
+                    img.src = `/frames/frame_${String(i).padStart(3, "0")}.jpg`;
+                    batchPromises.push(new Promise((resolve) => {
+                        img.onload = () => { loaded++; resolve(null); };
+                        img.onerror = () => { loaded++; resolve(null); };
+                    }));
+                }
 
-                    setCurrentProgress(progress);
+                // Wait for entire batch
+                await Promise.all(batchPromises);
 
-                    // Sync video time
-                    if (video.duration && Number.isFinite(video.duration)) {
-                        const targetTime = progress * video.duration;
-                        if (Number.isFinite(targetTime)) {
-                            video.currentTime = targetTime;
-                        }
-                    }
+                if (mounted) {
+                    onProgress(Math.round((loaded / TOTAL_FRAMES) * 100));
+                }
+            }
 
-                    ticking = false;
-                });
-                ticking = true;
+            if (mounted) {
+                onComplete();
             }
         };
 
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        handleScroll();
+        loadAllFrames();
 
-        return () => window.removeEventListener("scroll", handleScroll);
+        return () => { mounted = false; };
+    }, [onProgress, onComplete]);
+
+    return null; // Invisible preloader
+}
+
+function HeroAnimation({ data }: { data: PreviewData }) {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [images, setImages] = useState<HTMLImageElement[]>([]);
+    const [currentProgress, setCurrentProgress] = useState(0);
+    const [firstFrameReady, setFirstFrameReady] = useState(false);
+
+    // Physics / Smoothing Refs
+    const targetProgressRef = useRef(0);
+    const currentProgressRef = useRef(0);
+    const animationFrameRef = useRef<number>();
+
+    // Load ALL frames in parallel for maximum speed
+    useEffect(() => {
+        const loadImages = () => {
+            const imageArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+            let loadedCount = 0;
+
+            for (let i = 0; i < TOTAL_FRAMES; i++) {
+                const img = new Image();
+                img.src = `/frames/frame_${String(i).padStart(3, "0")}.jpg`;
+                imageArray[i] = img;
+
+                img.onload = () => {
+                    loadedCount++;
+                    if (i === 0) {
+                        setFirstFrameReady(true);
+                    }
+                    // Update state when all loaded
+                    if (loadedCount === TOTAL_FRAMES) {
+                        setImages(imageArray);
+                    }
+                };
+                img.onerror = () => {
+                    loadedCount++;
+                    if (loadedCount === TOTAL_FRAMES) {
+                        setImages(imageArray);
+                    }
+                };
+            }
+
+            // Set initial array immediately so first frames can render
+            setImages(imageArray);
+        };
+        loadImages();
     }, []);
 
-    // Dynamic text overlays - uses complete hero_phrases from AI
+    // Store images in ref for use in scroll handler (avoids stale closure)
+    const imagesRef = useRef<HTMLImageElement[]>([]);
+    useEffect(() => {
+        imagesRef.current = images;
+    }, [images]);
+
+    // Combined physics loop + draw handler
+    useEffect(() => {
+        const drawFrame = (frameIndex: number) => {
+            if (!canvasRef.current) return;
+            const ctx = canvasRef.current.getContext("2d");
+            if (!ctx) return;
+
+            const imgs = imagesRef.current;
+            if (imgs.length === 0) return;
+
+            // clamp
+            const safeIndex = Math.max(0, Math.min(frameIndex, imgs.length - 1));
+            const img = imgs[safeIndex];
+
+            if (!img || !img.complete || img.naturalWidth === 0) return;
+
+            const canvas = canvasRef.current;
+            const dpr = window.devicePixelRatio || 1;
+
+            // Set canvas size
+            if (canvas.width !== canvas.offsetWidth * dpr) {
+                canvas.width = canvas.offsetWidth * dpr;
+                canvas.height = canvas.offsetHeight * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            // Black BG
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+
+            // Draw image centered/cover
+            const imgAspect = img.naturalWidth / img.naturalHeight;
+            const canvasAspect = canvas.offsetWidth / canvas.offsetHeight;
+            let destWidth, destHeight, destX, destY;
+
+            if (imgAspect > canvasAspect) {
+                destHeight = canvas.offsetHeight;
+                destWidth = canvas.offsetHeight * imgAspect;
+                destX = (canvas.offsetWidth - destWidth) / 2;
+                destY = 0;
+            } else {
+                destWidth = canvas.offsetWidth;
+                destHeight = canvas.offsetWidth / imgAspect;
+                destX = 0;
+                destY = (canvas.offsetHeight - destHeight) / 2;
+            }
+
+            ctx.drawImage(img, destX, destY, destWidth, destHeight);
+        };
+
+        // Inertial Smoothing Loop
+        const loop = () => {
+            const target = targetProgressRef.current;
+            const current = currentProgressRef.current;
+
+            // LERP for smoothing
+            // 0.08 is a good balance between smooth and responsive
+            const diff = target - current;
+            let newCurrent = current;
+
+            // Snap if close enough to avoid endless micro-updates
+            if (Math.abs(diff) < 0.0005) {
+                newCurrent = target;
+            } else {
+                newCurrent = current + diff * 0.08;
+            }
+
+            currentProgressRef.current = newCurrent;
+
+            // Calculate frame based on SMOOTHED progress
+            const imgs = imagesRef.current;
+            const maxLoadedFrame = Math.max(0, imgs.length - 1);
+            const targetFrame = Math.round(newCurrent * (TOTAL_FRAMES - 1));
+
+            drawFrame(targetFrame);
+
+            // Update React state for text overlays
+            // Only if changed enough to visible move (optimization)
+            if (Math.abs(newCurrent - current) > 0.001) {
+                setCurrentProgress(newCurrent);
+            }
+
+            animationFrameRef.current = requestAnimationFrame(loop);
+        };
+
+        const handleScroll = () => {
+            if (!containerRef.current) return;
+
+            const rect = containerRef.current.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const containerHeight = containerRef.current.offsetHeight;
+
+            const scrollableDistance = containerHeight - windowHeight;
+            const scrolled = -rect.top;
+
+            // Just update target, let loop handle smoothing
+            const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
+            targetProgressRef.current = progress;
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+
+        // Init
+        handleScroll();
+        loop();
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, []);
+
+    // Dynamic text overlays
     const heroPhrases = data.hero_phrases || [];
 
     const TEXT_OVERLAYS = [
@@ -235,45 +516,34 @@ function HeroAnimation({ data }: { data: PreviewData }) {
     return (
         <div ref={containerRef} className="relative h-[500vh] bg-black">
             <div className="sticky top-0 h-screen w-full overflow-hidden">
-                {/* Video Scrollytelling */}
-                <video
-                    ref={videoRef}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    src="/scrollytelling.mp4"
-                    muted
-                    playsInline
-                    preload="auto"
-                    style={{
-                        opacity: 1,
-                        filter: 'brightness(1.1)'
-                    }}
+                {/* Canvas for frame sequence */}
+                <canvas
+                    ref={canvasRef}
+                    className="absolute inset-0 w-full h-full"
+                    style={{ background: "#000" }}
                 />
 
                 {/* Floating Nav */}
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 w-full max-w-sm px-4">
-                    <div className="flex items-center justify-between bg-black/80 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10 mx-auto w-fit">
-                        <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30">
+                    <div className="flex items-center gap-2 bg-black/80 backdrop-blur-sm rounded-full px-4 py-2 border border-white/10">
+                        <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
                             <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
-
                         {/* Logo or Business Name */}
-                        <div className="mx-4 flex items-center justify-center">
-                            {data.logo_url ? (
-                                <img
-                                    src={data.logo_url}
-                                    alt={data.business_name}
-                                    className="h-6 max-w-[120px] object-contain brightness-0 invert"
-                                />
-                            ) : (
-                                <span className="text-white text-sm font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
-                                    {data.business_name || "Home"}
-                                </span>
-                            )}
-                        </div>
-
-                        <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                        {data.logo_url ? (
+                            <img
+                                src={data.logo_url}
+                                alt={data.business_name}
+                                className="h-6 max-w-[120px] object-contain px-2 brightness-0 invert"
+                            />
+                        ) : (
+                            <span className="text-white text-sm font-medium px-3">
+                                {data.business_name || "Home"}
+                            </span>
+                        )}
+                        <button className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
                             <svg className="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -281,8 +551,8 @@ function HeroAnimation({ data }: { data: PreviewData }) {
                     </div>
                 </div>
 
-                {/* Text Overlays */}
-                {TEXT_OVERLAYS.map((overlay) => (
+                {/* Text Overlays - only show after first frame loads */}
+                {firstFrameReady && TEXT_OVERLAYS.map((overlay) => (
                     <TextOverlay
                         key={overlay.id}
                         overlay={overlay}
@@ -292,7 +562,7 @@ function HeroAnimation({ data }: { data: PreviewData }) {
 
                 {/* Scroll Indicator */}
                 <motion.div
-                    className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/30 text-xs font-mono tracking-[0.3em] uppercase pointer-events-none"
+                    className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/30 text-xs font-mono tracking-[0.3em] uppercase"
                     animate={{ opacity: currentProgress > 0.1 ? 0 : 1 }}
                 >
                     <motion.div
@@ -331,16 +601,15 @@ function TextOverlay({
     }
 
     return (
-        <div
-            className={`absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none transition-all duration-300 ease-out`}
-            style={{
-                opacity,
-                transform: `translateY(${translateY}px)`
-            }}
+        <motion.div
+            className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity, y: translateY }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
         >
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white text-center leading-[0.9] tracking-tight px-4 drop-shadow-2xl">
+            <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white text-center leading-[0.9] tracking-tight px-4 shadow-black drop-shadow-2xl">
                 {overlay.text}
             </h2>
-        </div>
+        </motion.div>
     );
 }
