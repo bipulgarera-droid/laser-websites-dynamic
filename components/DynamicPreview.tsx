@@ -327,37 +327,37 @@ function HeroAnimation({ data }: { data: PreviewData }) {
     const [currentFrame, setCurrentFrame] = useState(0);
     const [firstFrameReady, setFirstFrameReady] = useState(false);
 
-    // Preload first frame immediately, then rest in background
+    // Load ALL frames in parallel for maximum speed
     useEffect(() => {
-        const loadImages = async () => {
-            const loaded: HTMLImageElement[] = [];
+        const loadImages = () => {
+            const imageArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+            let loadedCount = 0;
 
-            // Load first frame immediately
-            const firstImg = new Image();
-            firstImg.src = `/frames/frame_000.jpg`;
-            await new Promise((resolve) => {
-                firstImg.onload = resolve;
-                firstImg.onerror = resolve;
-            });
-            loaded.push(firstImg);
-            setImages([firstImg]);
-            setFirstFrameReady(true);
-
-            // Load remaining frames in background
-            for (let i = 1; i < TOTAL_FRAMES; i++) {
+            for (let i = 0; i < TOTAL_FRAMES; i++) {
                 const img = new Image();
                 img.src = `/frames/frame_${String(i).padStart(3, "0")}.jpg`;
-                await new Promise((resolve) => {
-                    img.onload = resolve;
-                    img.onerror = resolve;
-                });
-                loaded.push(img);
-                // Update state periodically to avoid blocking
-                if (i % 20 === 0) {
-                    setImages([...loaded]);
-                }
+                imageArray[i] = img;
+
+                img.onload = () => {
+                    loadedCount++;
+                    if (i === 0) {
+                        setFirstFrameReady(true);
+                    }
+                    // Update state when all loaded
+                    if (loadedCount === TOTAL_FRAMES) {
+                        setImages(imageArray);
+                    }
+                };
+                img.onerror = () => {
+                    loadedCount++;
+                    if (loadedCount === TOTAL_FRAMES) {
+                        setImages(imageArray);
+                    }
+                };
             }
-            setImages(loaded);
+
+            // Set initial array immediately so first frames can render
+            setImages(imageArray);
         };
         loadImages();
     }, []);
