@@ -335,7 +335,7 @@ function HeroPreloader({
                 const batchPromises = [];
                 for (let i = batch; i < Math.min(batch + BATCH_SIZE, TOTAL_FRAMES); i++) {
                     const img = new Image();
-                    img.src = `/frames/frame_${String(i).padStart(3, "0")}.png`;
+                    img.src = `/frames/frame_${String(i).padStart(3, "0")}.jpg`;
                     batchPromises.push(new Promise((resolve) => {
                         img.onload = () => { loaded++; resolve(null); };
                         img.onerror = () => { loaded++; resolve(null); };
@@ -378,7 +378,7 @@ function HeroAnimation({ data }: { data: PreviewData }) {
 
             // Load first frame immediately
             const firstImg = new Image();
-            firstImg.src = `/frames/frame_000.png`;
+            firstImg.src = `/frames/frame_000.jpg`;
             await new Promise((resolve) => {
                 firstImg.onload = resolve;
                 firstImg.onerror = resolve;
@@ -390,7 +390,7 @@ function HeroAnimation({ data }: { data: PreviewData }) {
             // Load remaining frames in background
             for (let i = 1; i < TOTAL_FRAMES; i++) {
                 const img = new Image();
-                img.src = `/frames/frame_${String(i).padStart(3, "0")}.png`;
+                img.src = `/frames/frame_${String(i).padStart(3, "0")}.jpg`;
                 await new Promise((resolve) => {
                     img.onload = resolve;
                     img.onerror = resolve;
