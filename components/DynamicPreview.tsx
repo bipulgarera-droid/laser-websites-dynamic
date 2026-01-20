@@ -39,6 +39,50 @@ interface DynamicPreviewProps {
 export default function DynamicPreview({ data }: DynamicPreviewProps) {
     const services = data.services || [];
     const valueProps = data.value_props || [];
+    const [isFullyLoaded, setIsFullyLoaded] = useState(false);
+    const [loadingProgress, setLoadingProgress] = useState(0);
+
+    // Full-screen loading blocker until all frames are ready
+    if (!isFullyLoaded) {
+        return (
+            <div className="fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center">
+                {/* Logo/Brand */}
+                <div className="text-white/60 text-xs font-mono tracking-[0.3em] uppercase mb-8">
+                    {data.business_name}
+                </div>
+
+                {/* Loading ring */}
+                <div className="relative w-20 h-20 mb-8">
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                        <circle
+                            cx="50" cy="50" r="45"
+                            fill="none"
+                            stroke="rgba(255,255,255,0.1)"
+                            strokeWidth="2"
+                        />
+                        <circle
+                            cx="50" cy="50" r="45"
+                            fill="none"
+                            stroke="rgba(255,255,255,0.6)"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeDasharray={`${loadingProgress * 2.83} 283`}
+                            className="transition-all duration-300"
+                        />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white/80 text-sm font-mono">{loadingProgress}%</span>
+                    </div>
+                </div>
+
+                {/* Preload all frames in background */}
+                <HeroPreloader
+                    onProgress={setLoadingProgress}
+                    onComplete={() => setIsFullyLoaded(true)}
+                />
+            </div>
+        );
+    }
 
     return (
         <main className="bg-black min-h-screen antialiased">
@@ -268,6 +312,56 @@ export default function DynamicPreview({ data }: DynamicPreviewProps) {
 
 // Hero Animation Component - Canvas Image Sequence
 const TOTAL_FRAMES = 192;
+
+// Preloader: loads ALL frames before allowing interaction (parallel batches for speed)
+function HeroPreloader({
+    onProgress,
+    onComplete
+}: {
+    onProgress: (percent: number) => void;
+    onComplete: () => void;
+}) {
+    useEffect(() => {
+        let mounted = true;
+        const BATCH_SIZE = 10; // Load 10 images at a time for speed
+
+        const loadAllFrames = async () => {
+            let loaded = 0;
+
+            for (let batch = 0; batch < TOTAL_FRAMES; batch += BATCH_SIZE) {
+                if (!mounted) return;
+
+                // Create batch of image load promises
+                const batchPromises = [];
+                for (let i = batch; i < Math.min(batch + BATCH_SIZE, TOTAL_FRAMES); i++) {
+                    const img = new Image();
+                    img.src = `/frames/frame_${String(i).padStart(3, "0")}.png`;
+                    batchPromises.push(new Promise((resolve) => {
+                        img.onload = () => { loaded++; resolve(null); };
+                        img.onerror = () => { loaded++; resolve(null); };
+                    }));
+                }
+
+                // Wait for entire batch
+                await Promise.all(batchPromises);
+
+                if (mounted) {
+                    onProgress(Math.round((loaded / TOTAL_FRAMES) * 100));
+                }
+            }
+
+            if (mounted) {
+                onComplete();
+            }
+        };
+
+        loadAllFrames();
+
+        return () => { mounted = false; };
+    }, [onProgress, onComplete]);
+
+    return null; // Invisible preloader
+}
 
 function HeroAnimation({ data }: { data: PreviewData }) {
     const containerRef = useRef<HTMLDivElement>(null);
