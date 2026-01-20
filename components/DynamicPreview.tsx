@@ -459,9 +459,6 @@ function HeroAnimation({ data }: { data: PreviewData }) {
         },
     ];
 
-    const loadingProgress = Math.round((images.length / TOTAL_FRAMES) * 100);
-    const isFullyLoaded = images.length >= TOTAL_FRAMES;
-
     return (
         <div ref={containerRef} className="relative h-[500vh] bg-black">
             <div className="sticky top-0 h-screen w-full overflow-hidden">
@@ -471,21 +468,6 @@ function HeroAnimation({ data }: { data: PreviewData }) {
                     className="absolute inset-0 w-full h-full"
                     style={{ background: "#000" }}
                 />
-
-                {/* Loading Progress - shows until all frames loaded */}
-                {!isFullyLoaded && (
-                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
-                        <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-white/40 transition-all duration-300"
-                                style={{ width: `${loadingProgress}%` }}
-                            />
-                        </div>
-                        <span className="text-white/30 text-xs font-mono">
-                            Loading {loadingProgress}%
-                        </span>
-                    </div>
-                )}
 
                 {/* Floating Nav */}
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30">
