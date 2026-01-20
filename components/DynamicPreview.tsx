@@ -362,26 +362,37 @@ function HeroAnimation({ data }: { data: PreviewData }) {
         loadImages();
     }, []);
 
-    // Scroll handler - clamp to loaded frames only
+    // Scroll handler with requestAnimationFrame for smooth animation
     useEffect(() => {
+        let ticking = false;
+
         const handleScroll = () => {
-            if (!containerRef.current) return;
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    if (!containerRef.current) {
+                        ticking = false;
+                        return;
+                    }
 
-            const rect = containerRef.current.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            const containerHeight = containerRef.current.offsetHeight;
+                    const rect = containerRef.current.getBoundingClientRect();
+                    const windowHeight = window.innerHeight;
+                    const containerHeight = containerRef.current.offsetHeight;
 
-            const scrollableDistance = containerHeight - windowHeight;
-            const scrolled = -rect.top;
-            const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
+                    const scrollableDistance = containerHeight - windowHeight;
+                    const scrolled = -rect.top;
+                    const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
 
-            setCurrentProgress(progress);
+                    setCurrentProgress(progress);
 
-            // CRITICAL: Only show frames that are actually loaded
-            // This prevents incomplete animation on first visit
-            const maxLoadedFrame = Math.max(0, images.length - 1);
-            const targetFrame = Math.round(progress * (TOTAL_FRAMES - 1));
-            setCurrentFrame(Math.min(targetFrame, maxLoadedFrame));
+                    // Only show frames that are actually loaded
+                    const maxLoadedFrame = Math.max(0, images.length - 1);
+                    const targetFrame = Math.round(progress * (TOTAL_FRAMES - 1));
+                    setCurrentFrame(Math.min(targetFrame, maxLoadedFrame));
+
+                    ticking = false;
+                });
+                ticking = true;
+            }
         };
 
         window.addEventListener("scroll", handleScroll, { passive: true });
