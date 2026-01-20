@@ -90,11 +90,7 @@ const FALLBACK_DATA: Record<string, PreviewData> = {
 };
 
 async function getPreviewData(slug: string): Promise<PreviewData | null> {
-    // Check fallback data first
-    if (FALLBACK_DATA[slug]) {
-        return FALLBACK_DATA[slug];
-    }
-
+    // 1. Try Supabase first (allows dynamic updates)
     try {
         const response = await fetch(
             `${SUPABASE_URL}/rest/v1/personalized_previews?slug=eq.${encodeURIComponent(slug)}&select=*`,
@@ -103,18 +99,26 @@ async function getPreviewData(slug: string): Promise<PreviewData | null> {
                     'apikey': SUPABASE_ANON_KEY,
                     'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                 },
-                next: { revalidate: 60 }
+                next: { revalidate: 0 } // No cache for fresh previews
             }
         );
 
-        if (!response.ok) return null;
-
-        const data = await response.json();
-        return data?.[0] || null;
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0) {
+                return data[0] as PreviewData;
+            }
+        }
     } catch (error) {
-        console.error('Error fetching preview:', error);
-        return null;
+        console.error('Error fetching preview from Supabase:', error);
     }
+
+    // 2. Fallback to hardcoded examples if not in DB
+    if (FALLBACK_DATA[slug]) {
+        return FALLBACK_DATA[slug];
+    }
+
+    return null;
 }
 
 export default async function PreviewPage({ params }: { params: { slug: string } }) {
