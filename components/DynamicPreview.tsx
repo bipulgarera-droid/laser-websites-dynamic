@@ -362,86 +362,95 @@ function HeroAnimation({ data }: { data: PreviewData }) {
         loadImages();
     }, []);
 
-    // Scroll handler with requestAnimationFrame for smooth animation
+    // Store images in ref for use in scroll handler (avoids stale closure)
+    const imagesRef = useRef<HTMLImageElement[]>([]);
     useEffect(() => {
-        let ticking = false;
+        imagesRef.current = images;
+    }, [images]);
+
+    // Combined scroll + draw handler - bypasses React state for smooth animation
+    useEffect(() => {
+        let lastFrame = -1;
+
+        const drawFrame = (frameIndex: number) => {
+            if (!canvasRef.current) return;
+            const ctx = canvasRef.current.getContext("2d");
+            if (!ctx) return;
+
+            const imgs = imagesRef.current;
+            if (imgs.length === 0) return;
+
+            const img = imgs[frameIndex];
+            if (!img || !img.complete || img.naturalWidth === 0) return;
+
+            const canvas = canvasRef.current;
+            const dpr = window.devicePixelRatio || 1;
+
+            // Set canvas size
+            if (canvas.width !== canvas.offsetWidth * dpr) {
+                canvas.width = canvas.offsetWidth * dpr;
+                canvas.height = canvas.offsetHeight * dpr;
+                ctx.scale(dpr, dpr);
+            }
+
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+
+            // Draw image centered/cover
+            const imgAspect = img.naturalWidth / img.naturalHeight;
+            const canvasAspect = canvas.offsetWidth / canvas.offsetHeight;
+            let destWidth, destHeight, destX, destY;
+
+            if (imgAspect > canvasAspect) {
+                destHeight = canvas.offsetHeight;
+                destWidth = canvas.offsetHeight * imgAspect;
+                destX = (canvas.offsetWidth - destWidth) / 2;
+                destY = 0;
+            } else {
+                destWidth = canvas.offsetWidth;
+                destHeight = canvas.offsetWidth / imgAspect;
+                destX = 0;
+                destY = (canvas.offsetHeight - destHeight) / 2;
+            }
+
+            ctx.drawImage(img, destX, destY, destWidth, destHeight);
+        };
 
         const handleScroll = () => {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    if (!containerRef.current) {
-                        ticking = false;
-                        return;
-                    }
+            if (!containerRef.current) return;
 
-                    const rect = containerRef.current.getBoundingClientRect();
-                    const windowHeight = window.innerHeight;
-                    const containerHeight = containerRef.current.offsetHeight;
+            const rect = containerRef.current.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const containerHeight = containerRef.current.offsetHeight;
 
-                    const scrollableDistance = containerHeight - windowHeight;
-                    const scrolled = -rect.top;
-                    const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
+            const scrollableDistance = containerHeight - windowHeight;
+            const scrolled = -rect.top;
+            const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
 
-                    setCurrentProgress(progress);
+            // Calculate frame
+            const imgs = imagesRef.current;
+            const maxLoadedFrame = Math.max(0, imgs.length - 1);
+            const targetFrame = Math.round(progress * (TOTAL_FRAMES - 1));
+            const frameIndex = Math.min(targetFrame, maxLoadedFrame);
 
-                    // Only show frames that are actually loaded
-                    const maxLoadedFrame = Math.max(0, images.length - 1);
-                    const targetFrame = Math.round(progress * (TOTAL_FRAMES - 1));
-                    setCurrentFrame(Math.min(targetFrame, maxLoadedFrame));
-
-                    ticking = false;
-                });
-                ticking = true;
+            // Only redraw if frame changed
+            if (frameIndex !== lastFrame) {
+                lastFrame = frameIndex;
+                requestAnimationFrame(() => drawFrame(frameIndex));
             }
+
+            // Update progress for text overlays (this React state is fine - less frequent)
+            setCurrentProgress(progress);
         };
 
         window.addEventListener("scroll", handleScroll, { passive: true });
+
+        // Initial draw
         handleScroll();
+        requestAnimationFrame(() => drawFrame(0));
 
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [images.length]); // Re-run when more images load
-
-    // Draw frame on canvas
-    useEffect(() => {
-        if (!canvasRef.current || images.length === 0) return;
-        const ctx = canvasRef.current.getContext("2d");
-        if (!ctx) return;
-
-        const img = images[currentFrame];
-        if (!img || !img.complete || img.naturalWidth === 0) return;
-
-        const canvas = canvasRef.current;
-        const dpr = window.devicePixelRatio || 1;
-
-        // Set canvas size
-        if (canvas.width !== canvas.offsetWidth * dpr) {
-            canvas.width = canvas.offsetWidth * dpr;
-            canvas.height = canvas.offsetHeight * dpr;
-            ctx.scale(dpr, dpr);
-        }
-
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-
-        // Draw image centered/cover
-        const imgAspect = img.naturalWidth / img.naturalHeight;
-        const canvasAspect = canvas.offsetWidth / canvas.offsetHeight;
-        let destWidth, destHeight, destX, destY;
-
-        if (imgAspect > canvasAspect) {
-            destHeight = canvas.offsetHeight;
-            destWidth = canvas.offsetHeight * imgAspect;
-            destX = (canvas.offsetWidth - destWidth) / 2;
-            destY = 0;
-        } else {
-            destWidth = canvas.offsetWidth;
-            destHeight = canvas.offsetWidth / imgAspect;
-            destX = 0;
-            destY = (canvas.offsetHeight - destHeight) / 2;
-        }
-
-        ctx.drawImage(img, destX, destY, destWidth, destHeight);
-    }, [currentFrame, images, firstFrameReady]);
+    }, []);
 
     // Dynamic text overlays - uses complete hero_phrases from AI
     const heroPhrases = data.hero_phrases || [];
