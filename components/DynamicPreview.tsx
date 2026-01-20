@@ -397,7 +397,7 @@ function HeroAnimation({ data }: { data: PreviewData }) {
         if (!ctx) return;
 
         const img = images[currentFrame];
-        if (!img) return;
+        if (!img || !img.complete || img.naturalWidth === 0) return;
 
         const canvas = canvasRef.current;
         const dpr = window.devicePixelRatio || 1;
@@ -430,7 +430,7 @@ function HeroAnimation({ data }: { data: PreviewData }) {
         }
 
         ctx.drawImage(img, destX, destY, destWidth, destHeight);
-    }, [currentFrame, images]);
+    }, [currentFrame, images, firstFrameReady]);
 
     // Dynamic text overlays - uses complete hero_phrases from AI
     const heroPhrases = data.hero_phrases || [];
